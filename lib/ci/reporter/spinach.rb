@@ -26,7 +26,7 @@ module CI
     end
 
     # Basic structure representing the running of a test suite.  Used to time tests and store results.
-    class TestSuite < Struct.new(:name, :tests, :time, :failures, :errors, :skipped, :assertions, :timestamp)
+    class TestSuite < Struct.new(:id, :name, :tests, :time, :failures, :errors, :skipped, :assertions, :timestamp)
       include StructureXmlHelpers
 
       attr_accessor :testcases
@@ -82,7 +82,7 @@ module CI
     end
 
     # Structure used to represent an individual test case.  Used to time the test and store the result.
-    class TestCase < Struct.new(:name, :time, :assertions)
+    class TestCase < Struct.new(:id, :name, :time, :assertions)
       include StructureXmlHelpers
 
       attr_accessor :failures
@@ -160,20 +160,22 @@ module CI
         @report_manager = ReportManager.new('features')
       end
 
+      def uid(item)
+        item.tags.select{|x| x.start_with?('uid') }.first.gsub("uid-", "")
+      end
       def generate_name(item)
-        uid = item.tags.select{|x| x.start_with?('uid') }.first.gsub("-", ":")
         name = item.is_a?(Hash) ? item['name'] : item.name
 
         "#{name} (#{uid})"
       end
 
       def before_feature_run(feature)
-        @test_suite = TestSuite.new(generate_name(feature))
+        @test_suite = TestSuite.new(uid(feature), generate_name(feature))
         @test_suite.start
       end
 
       def before_scenario_run(scenario, step_definitions = nil)
-        @test_case = TestCase.new(generate_name(scenario))
+        @test_case = TestCase.new(uid(scenario), generate_name(scenario))
         @test_case.start
       end
 
