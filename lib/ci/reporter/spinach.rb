@@ -31,8 +31,8 @@ module CI
 
       attr_accessor :testcases
       attr_accessor :stdout, :stderr
-      def initialize(name)
-        super(name.to_s) # RSpec passes a "description" object instead of a string
+      def initialize(id, name)
+        super(id, name.to_s) # RSpec passes a "description" object instead of a string
         @testcases = []
         @capture_out = nil
         @capture_err = nil
