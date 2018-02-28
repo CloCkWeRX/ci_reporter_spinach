@@ -164,9 +164,7 @@ module CI
         item.tags.select{|x| x.start_with?('uid') }.first.gsub("uid-", "")
       end
       def generate_name(item)
-        name = item.is_a?(Hash) ? item['name'] : item.name
-
-        "#{name} (#{uid})"
+        item.is_a?(Hash) ? item['name'] : item.name
       end
 
       def before_feature_run(feature)
