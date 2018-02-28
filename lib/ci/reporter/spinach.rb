@@ -4,6 +4,33 @@ require 'spinach'
 
 module CI
   module Reporter
+    module StructureXmlHelpers
+      class TestSuite < Struct.new(:name, :tests, :time, :failures, :errors, :skipped, :assertions, :timestamp)
+        # Creates an xml string containing the test suite results.
+        def to_xml
+          builder = Builder::XmlMarkup.new(indent: 2)
+          builder.instruct!
+          builder.testsuites do
+            builder.testsuite(cleaned_attributes) do
+              @testcases.each do |tc|
+                tc.to_xml(builder)
+              end
+              unless self.stdout.to_s.empty?
+                builder.tag! "system-out" do
+                  builder.text!(self.stdout)
+                end
+              end
+              unless self.stderr.to_s.empty?
+                builder.tag! "system-err" do
+                  builder.text!(self.stderr)
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+
     class Spinach < ::Spinach::Reporter
       include SpinachVersion
 
