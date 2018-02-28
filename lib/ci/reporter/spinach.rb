@@ -161,8 +161,9 @@ module CI
       end
 
       def uid(item)
-        item.tags.select{|x| x.start_with?('uid') }.first.gsub("uid-", "")
+        item.tags.detect{|x| x.start_with?('uid') }&.gsub("uid-", "")
       end
+
       def generate_name(item)
         item.is_a?(Hash) ? item['name'] : item.name
       end
