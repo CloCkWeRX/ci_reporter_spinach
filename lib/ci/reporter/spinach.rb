@@ -63,20 +63,18 @@ module CI
       def to_xml
         builder = Builder::XmlMarkup.new(indent: 2)
         builder.instruct!
-        builder.testsuites(name: "Client Hub") do
-          builder.testsuite(cleaned_attributes) do
-            @testcases.each do |tc|
-              tc.to_xml(builder)
+        builder.testsuite(cleaned_attributes) do
+          @testcases.each do |tc|
+            tc.to_xml(builder)
+          end
+          unless self.stdout.to_s.empty?
+            builder.tag! "system-out" do
+              builder.text!(self.stdout)
             end
-            unless self.stdout.to_s.empty?
-              builder.tag! "system-out" do
-                builder.text!(self.stdout)
-              end
-            end
-            unless self.stderr.to_s.empty?
-              builder.tag! "system-err" do
-                builder.text!(self.stderr)
-              end
+          end
+          unless self.stderr.to_s.empty?
+            builder.tag! "system-err" do
+              builder.text!(self.stderr)
             end
           end
         end
