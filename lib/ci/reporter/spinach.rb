@@ -63,7 +63,7 @@ module CI
       def to_xml
         builder = Builder::XmlMarkup.new(indent: 2)
         builder.instruct!
-        builder.testsuites do
+        builder.testsuites(name: "Client Hub") do
           builder.testsuite(cleaned_attributes) do
             @testcases.each do |tc|
               tc.to_xml(builder)
